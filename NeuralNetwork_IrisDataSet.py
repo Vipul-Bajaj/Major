@@ -3,6 +3,8 @@ import math
 from phe import paillier
 import time
 import random
+import matplotlib.pyplot as plt
+from sklearn.metrics import f1_score
 
 # Alice Training Data
 data_Alice = np.array([[5.1, 3.5, 1.4, 0.2],
@@ -124,7 +126,7 @@ data_test = np.array([
                 )
 
 # Test Data Output
-data_test_res = np.array([[0],[0],[1],[0],[1],[0],[1],[1],[1],[1],[0],[0],[1],[1],[1],[1],[0],[0],[1],[1],[1],[0],[0],[0],[0],[0],[0],[0],[1],[1]])
+data_test_res = np.array([[0.0],[0.0],[1.0],[0.0],[1.0],[0.0],[1.0],[1.0],[1.0],[1.0],[0.0],[0.0],[1.0],[1.0],[1.0],[1.0],[0.0],[0.0],[1.0],[1.0],[1.0],[0.0],[0.0],[0.0],[0.0],[0.0],[0.0],[0.0],[1.0],[1.0]])
 
 # Sigmoid Function
 def sigmoid(x):
@@ -148,9 +150,10 @@ def activation_slope(x):
 # Class initialization
 class Alice:
 
+    costs = []
     def __init__(self):
-        self.epoch = 50000  # Setting training iterations
-        self.lr = 0.001  # Setting learning rate
+        self.epoch = 10000  # Setting training iterations
+        self.lr = 0.01  # Setting learning rate
         self.inputlayer_neurons = data_Alice.shape[1]  # number of features in data set
         self.hiddenlayer_neurons = 5 # number of hidden layers neurons
         self.output_neurons = 1  # number of neurons at output layer
@@ -177,6 +180,9 @@ class Alice:
             output_layer_input = output_layer_input1 + self.bout
             output = sigmoid(output_layer_input)
 
+            # for i in range(len(data_Alice)):
+            #     self.costs.append(np.square(data_Alice_res - output)[i][0])
+        
             # Backpropagation
             E = data_Alice_res-output
             slope_output_layer = derivatives_sigmoid(output)
@@ -255,8 +261,9 @@ class Alice:
             output_layer_input = output_layer_input1 + self.bout
             output = sigmoid(output_layer_input)
 
+            self.costs.append(np.square(target - output)[0][0])
+
             dz_dwh=np.zeros(shape=(1,self.inputlayer_neurons))
-            # print(dz_dwh[0])
             for j in range(z.shape[1]): dz_dwh[0][0] +=(num1[0][j] - z[0][j]) / (h)
             for j in range(z.shape[1]): dz_dwh[0][1] +=(num2[0][j] - z[0][j]) / (h)
             for j in range(z.shape[1]): dz_dwh[0][2] +=(num3[0][j] - z[0][j]) / (h)
@@ -277,6 +284,14 @@ class Alice:
             self.bh = bh
             self.wout = wout
             self.bout = bout
+
+    def plot_graph(self):
+        plt.plot(self.costs)
+        plt.title('Cost vs iterations')
+        #plt.set_xlabel('iterations')
+        #plt.set_ylabel('Cost ')
+        plt.show()
+        plt.close()
 
 class Bob:
     
@@ -331,7 +346,7 @@ if __name__ == "__main__":
     a.training()
     print("Alice Training Completed")
 
-    for i in range(1,5000):
+    for i in range(1,20000):
         WH,BH,WOUT,BOUT = a.encrypt_hyperparams()
         b=Bob(a.public_key,WH,BH,WOUT,BOUT)
         z , num1, num2 , num3,num4 ,et = b.z_calc()
@@ -346,6 +361,7 @@ if __name__ == "__main__":
 
 start_time = time.time()
 t = 0
+outputs = np.ndarray(shape=(data_test.shape[0],1))
 for i in range(len(data_test)):
     point = data_test[i]
     # Forward Propogation
@@ -355,14 +371,8 @@ for i in range(len(data_test)):
     output_layer_input1=np.dot(hiddenlayer_activations,a.wout)
     output_layer_input= output_layer_input1 + a.bout
     output = sigmoid(output_layer_input)
-    output = output[0][0]
-    print("pred : {}".format(output))
-    if (round(output) == data_test_res[i]) :
-        print ("True")
-        t=t+1
-    else:
-        print ("False")
-        
-Accuracy = float(t/30.0)*100   
-print (Accuracy)
+    outputs[i][0] = round(output[0][0])
+   
+print("F1 Score of the model ",f1_score(data_test_res, outputs, average='micro'))
+a.plot_graph()
 print("--- %s seconds ---" % (time.time() - start_time))

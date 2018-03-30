@@ -1,0 +1,18 @@
+Alice Training Completed
+Bob Training Completed
+--- 403.3568994998932 seconds ---
+F1 Score of the model  0.9872435681
+--- 0.008052587509155273 seconds ---
+
+Alice Training Completed
+Bob Training Completed
+--- 405.4521785932 seconds ---
+F1 Score of the model  0.974248927039
+--- 0.015304803848266602 seconds ---
+
+Alice Training Completed
+Bob Training Completed
+--- 398.66208934783936 seconds ---
+F1 Score of the model  0.978540772532
+--- 0.015475988388061523 seconds ----
+
