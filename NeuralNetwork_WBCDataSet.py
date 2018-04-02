@@ -5,6 +5,7 @@ import time
 import random
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score
+from sklearn.metrics import classification_report
 import sys
 
 # Alice Training Data
@@ -1407,8 +1408,8 @@ class Alice:
 
     costs = []
     def __init__(self):
-        self.epoch = 15000  # Setting training iterations
-        self.lr = 0.01  # Setting learning rate
+        self.epoch = 18000  # Setting training iterations
+        self.lr = 0.05  # Setting learning rate
         self.inputlayer_neurons = data_Alice.shape[1]  # number of features in data set
         self.hiddenlayer_neurons = 15 # number of hidden layers neurons
         self.output_neurons = 1  # number of neurons at output layer
@@ -1702,5 +1703,6 @@ Accuracy = float(t/data_test_res.shape[0])*100
 # print("Bobs Iterations : ",bobs_epoch)
 # print("F1 Score of the model ",Accuracy)
 print("F1 Score of the model ",f1_score(data_test_res, outputs, average='micro'))
+print(classification_report(data_test_res, outputs, target_names=['Benign','Malignant']))
 # a.plot_graph()
 print("--- %s seconds ---" % (time.time() - start_time))

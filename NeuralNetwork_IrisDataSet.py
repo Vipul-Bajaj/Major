@@ -5,6 +5,7 @@ import time
 import random
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score
+from sklearn.metrics import classification_report
 
 # Alice Training Data
 data_Alice = np.array([[5.1, 3.5, 1.4, 0.2],
@@ -374,5 +375,6 @@ for i in range(len(data_test)):
     outputs[i][0] = round(output[0][0])
    
 print("F1 Score of the model ",f1_score(data_test_res, outputs, average='micro'))
-a.plot_graph()
+print(classification_report(data_test_res, outputs, target_names=['Iris Setosa','Iris Virginica']))
+# a.plot_graph()
 print("--- %s seconds ---" % (time.time() - start_time))
